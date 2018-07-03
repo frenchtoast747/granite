@@ -229,7 +229,7 @@ latex_elements = {
 # [howto/manual]).
 latex_documents = [
     (master_doc, u'granite.tex',
-     u'granite Documentation', u'manual'),
+     u'Granite Documentation', 'Aaron Boman', u'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at
