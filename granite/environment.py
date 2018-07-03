@@ -299,7 +299,7 @@ class File(Renderable):
             f.write(contents + '\n' if self.ADD_NEWLINE else '')
 
 
-class SimpleFile(RenderedFile):
+class SimpleFile(File):
     """
     Follows the renderable interface and allows for building up a file with
     ``add_content()`` then rendering and writing to disk at a later time.
