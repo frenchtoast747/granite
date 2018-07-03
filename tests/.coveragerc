@@ -1,0 +1,20 @@
+[run]
+# This is Level C coverage. Set to True
+# for Level B coverage.
+branch = False
+source = granite
+
+# debug = trace, config
+
+[html]
+directory = coverage
+title = granite
+
+[report]
+exclude_lines =
+    pragma: no cover
+    if __name__ == ["']__main__["']
+    def __repr__
+    def __str__
+    raise NotImplementedError
+    pass

@@ -1,0 +1,6 @@
+*.py[co]
+.coverage/*
+docs/build/*
+docs/source/api/*
+.tox/*
+granite.egg-info/*
