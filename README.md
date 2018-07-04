@@ -1,4 +1,5 @@
 # granite
+[![Build Status](https://travis-ci.org/frenchtoast747/granite.svg?branch=master)](https://travis-ci.org/frenchtoast747/granite)
 
 Make your Python applications as solid as granite.
 
