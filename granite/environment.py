@@ -456,7 +456,28 @@ class TemporaryProject(object):
             filename (str): the filename to touch
         """
         filename = self.abspath(filename)
-        Path(filename).touch()
+        # originally, this code was simply:
+        #    Path().touch()
+        # which does what it should under normal conditions.
+        # However, the associated test was sporadically failing
+        # on linux (probably because it's File System IO is much
+        # faster than on Windows), so this keeps retrying the touch
+        # until the modified time is actually different from the
+        # start of this call.
+
+        # if the file doesn't exist, .touch() will create it, so this
+        # should be set to an "infinitely" small value.
+        initial = 0
+
+        if os.path.exists(filename):
+            stat = _filestat_from_ostat(os.stat(filename))
+            initial = stat.st_mtime
+
+        while True:
+            Path(filename).touch()
+            stat = _filestat_from_ostat(os.stat(filename))
+            if stat.st_mtime > initial:
+                break
 
     def glob(self, pattern, start='', absolute=False):
         """
@@ -562,6 +583,18 @@ FileStat = collections.namedtuple(
 Mimics the os.stat() stat result object except this also includes the md5 hash
 of the file.
 """
+
+
+def _filestat_from_ostat(stat, md5=None):
+    kwargs = {}
+    for field in FileStat._fields:
+        # the only field that will be None will be "md5".
+        # we'll set that later.
+        value = getattr(stat, field, None)
+        kwargs[field] = value
+    kwargs['md5'] = md5
+
+    return FileStat(**kwargs)
 
 
 class Snapshot(object):
@@ -673,19 +706,9 @@ class Snapshot(object):
         for root, _, files in os.walk(directory):
             for path in files:
                 path = os.path.join(root, path)
-                stat = self._create_stat(os.stat(path), self._hash_file(path))
+                stat = _filestat_from_ostat(
+                    os.stat(path), self._hash_file(path))
                 self.paths[path_as_key(path, relative_to=directory)] = stat
-
-    def _create_stat(self, stat_result, md5):
-        kwargs = {}
-        for field in FileStat._fields:
-            # the only field that will me None will be "md5".
-            # we'll set that later.
-            value = getattr(stat_result, field, None)
-            kwargs[field] = value
-        kwargs['md5'] = md5
-
-        return FileStat(**kwargs)
 
     def _hash_file(self, filename):
         h = hashlib.md5()
