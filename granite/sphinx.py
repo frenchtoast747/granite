@@ -101,7 +101,7 @@ class DocBuilder(object):
     def __init__(self):
         for attribute, description in (
                 ('SOURCE_DIR',
-                    'a path to the documentation source directory.'),
+                 'a path to the documentation source directory.'),
                 ('BUILD_DIR', 'a directory place the built documentation.'),
                 ('PROJECT_DIR',
                  'the path to the project package directory (the directory '
