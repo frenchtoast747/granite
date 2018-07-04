@@ -26,7 +26,7 @@ class TestTempProjectMixin(TemporaryProjectMixin, BaseTestCase):
         # instances, so setting it to None should cause the instance to be
         # garbage collected, thus calling its __del__, which should also
         # delete the temp project directory.
-        self.temp_project = None
+        del self.temp_project
         self.assertFalse(os.path.exists(path))
 
     def test_that_files_contents_can_be_read(self):

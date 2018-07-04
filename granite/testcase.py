@@ -51,11 +51,10 @@ class AssetMixin(TestCaseMixin):
         ``/path/to/assets/`` and the assets directory contains
         ``some_file.txt``, then::
 
-            >>> self.get_asset_filename('some_file.txt')`
+            >>> self.get_asset_filename('some_file.txt')
             'path/to/assets/some_file.txt'
 
         Raises:
-            AssetDirectoryNotSet: when the ASSETS_DIR attribute is not set.
             AssetNotFound: when the filename to search for is not found on disk.
 
         Returns:
@@ -64,7 +63,7 @@ class AssetMixin(TestCaseMixin):
         filename = os.path.join(self.ASSET_DIR, *parts)
         if not os.path.exists(filename):
             raise AssetNotFound(
-                'self.asset_filename() was called with "{}" which constructed the filename '
+                'self.get_asset_filename() was called with "{}" which constructed the filename '
                 '"{}" and was not found. Make sure that your path is correct and that '
                 'ASSET_DIR on your current or inherited TestCase classes is set '
                 'appropriately.'.format(parts, filename)
@@ -89,7 +88,6 @@ class AssetMixin(TestCaseMixin):
             The contents of the file using the given read ``mode``.
 
         Raises:
-            AssetDirectoryNotSet: when the ASSETS_DIR attribute is not set.
             AssetNotFound: when the filename to search for is not found on disk.
         """
         filename = self.get_asset_filename(filename, *parts)
@@ -128,19 +126,20 @@ class TemporaryProjectMixin(TestCaseMixin):
     """
     TMP_DIR = None
     """
-    Allows for setting the temp directory. Defaults to Python's tempfile.mkdtemp().
+    Allows for setting the temp directory. Defaults to ``None`` which will use 
+    Python's :any:`tempfile.mkdtemp` to make the temp directory.
     """
     PRESERVE_DIR = None
     """
-    Sets where the preserved path should be dumped too. This overrides the TMP_DIR when
-    ENABLE_PRESERVE is set to True.
+    Sets where the preserved path should be dumped too. This overrides the ``TMP_DIR`` when
+    ``ENABLE_PRESERVE`` is set to True.
     """
     ENABLE_PRESERVE = False
     """
     A flag indicating whether the temp project should be preserved after the temp project
     object is destroyed. If True, the directory will still exist allowing a user to view
     the state of the directory after a test has run. This works in tandem with the
-    PRESERVE_DIR class attribute.
+    ``PRESERVE_DIR`` class attribute.
     """
     TemporaryProjectClass = TemporaryProject
     """
@@ -237,16 +236,19 @@ class TestCase(StandardTestCase):
     """
     Extends the Standard Library's TestCase class.
     """
-    def assert_length(self, items, length, msg=''):
-        """
-        Assert that the given items have the given length.
 
-        Args:
-            items (Sequence): the items to check
-            length (int): the length to assert
-            msg (str): optional message if the assertion fails
+    def __str__(self):
         """
-        self.assertEqual(len(items), length, msg=msg)
+        Returns a copy/paste-able representation of the test name.
+
+        By default, a unittest.TestCase class will print out something like:
+            `test_my_feature (test_my_features_module.FeatureTestCase)`
+        which can't just be copied and pasted onto the command line in one go. You
+        have to copy the part in the parens first, then copy the test name itself.
+        This is somewhat annoying as usually the output only matters when a test fails
+        and when a test fails, it is usually desirable to reproduce the error locally.
+        """
+        return "%s.%s" % (strclass(self.__class__), self._testMethodName)
 
     def assert_iterable_of_type(self, iterable, types, msg=''):
         """
@@ -263,19 +265,6 @@ class TestCase(StandardTestCase):
                     'Element at index "{}" is not of type(s) "{!r}". {}'
                     .format(idx, types, msg)
                 )
-
-    def __str__(self):
-        """
-        Returns a copy/paste-able representation of the test name.
-
-        By default, a unittest.TestCase class will print out something like:
-            `test_my_feature (test_my_features_module.FeatureTestCase)`
-        which can't just be copied and pasted onto the command line in one go. You
-        have to copy the part in the parens first, then copy the test name itself.
-        This is somewhat annoying as usually the output only matters when a test fails
-        and when a test fails, it is usually desirable to reproduce the error locally.
-        """
-        return "%s.%s" % (strclass(self.__class__), self._testMethodName)
 
     def assert_length(self, sized, length, msg=''):
         """

@@ -16,7 +16,7 @@ setup(
     author='Aaron Boman',
     license='MIT',
     url='https://github.com/frenchtoast747/granite',
-    version='0.0.2',
+    version='0.0.3',
     long_description=__doc__,
     packages=['granite'],
     include_package_data=True,

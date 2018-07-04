@@ -30,7 +30,16 @@ class Renderable(object):
     An interface for objects that can be rendered.
     """
     template = None
+    """
+    The name of the template that instances of this class should use when rendering.
+    This attribute is required and must be set by subclasses.
+    """
     template_dirs = None
+    """
+    The template search path; a list of strings. When searching for a template
+    by name, then the first file found on the path will be chosen. This attribute
+    is required and must be set by subclasses.
+    """
     _environment = None
 
     def get_environment(self, template_directories):
@@ -132,7 +141,7 @@ class Renderable(object):
         return result
 
 
-class File(Renderable):
+class RenderedFile(Renderable):
     """
     A file that will be rendered to disk.
 
@@ -164,22 +173,6 @@ class File(Renderable):
         filename (str): the full path to where the file should exist on disk
                         when rendered
 
-    Attributes:
-        template_dirs (List[str]): the template search path; when searching for
-                                   a template by name, then the first file
-                                   found on the path will be chosen. This
-                                   attribute is required and must be set by
-                                   subclasses.
-        template (str):            the name of the template that instances of
-                                   this class should use when rendering. This
-                                   attribute is required and must be set by
-                                   subclasses.
-        path (str):                the path to this rendered file (without the
-                                   filename itself)
-        filename (str):            the name of the rendered file (without the
-                                   path)
-        full_name (str):           the full path to the file
-
     Examples::
 
         # tests/environment.py
@@ -202,6 +195,7 @@ class File(Renderable):
              {{ content }}
             '''
         )
+        print('This test is currently running: {{ id }}')
 
         class PythonScript(MyRenderedFile):
             template = 'template.py'
@@ -215,8 +209,9 @@ class File(Renderable):
                 self.script.add_content('My name is Aaron')
 
             def test_the_thing(self):
-                self.script.add_content(
-                    'This is currently running: ' + self.id())
+                # setting the `id` attribute provides the `id`
+                # context variable in the template
+                self.script.id = self.id()
                 self.script.render()
                 with open(self.script.full_name) as f:
                     self.assertEqual(
@@ -226,9 +221,9 @@ class File(Renderable):
                         print(
                             '''
                             My name is Aaron
-                            This is currently running: test_the_thing
                             '''
                         )
+                        print('This test is currently running: test_the_thing')
                         \"\"\"
                     )
     """
@@ -252,6 +247,18 @@ class File(Renderable):
     not. When generating C code to be compiled by the ARM/GCC compiler, 
     this makes the compiler happy. Defaults to True. Set to False to disable.
     """
+    path = ''
+    """
+    The path to this rendered file (without the filename itself)
+    """
+    filename = ''
+    """
+    The name of the rendered file (without the path)
+    """
+    full_name = ''
+    """
+    the full path to the file
+    """
 
     def __init__(self, filename=''):
         self.full_name = filename
@@ -269,7 +276,7 @@ class File(Renderable):
             dict: the variable names and their values; the scope to appear in
                   the template
         """
-        context = super(File, self).get_context()
+        context = super(RenderedFile, self).get_context()
         content = '\n'.join(self.content)
         if not self.DISABLE_ESCAPING:
             content = content.replace('\\', r'\\')
@@ -293,13 +300,13 @@ class File(Renderable):
         Renders the template and writes the contents to disk to this instance's
         filename.
         """
-        contents = super(File, self).render()
+        contents = super(RenderedFile, self).render()
         filename = os.path.join(self.path, self.filename)
         with open(filename, self.WRITE_MODE) as f:
             f.write(contents + '\n' if self.ADD_NEWLINE else '')
 
 
-class SimpleFile(File):
+class SimpleFile(RenderedFile):
     """
     Follows the renderable interface and allows for building up a file with
     ``add_content()`` then rendering and writing to disk at a later time.
@@ -318,9 +325,24 @@ class SimpleFile(File):
 
 class TemporaryProject(object):
     """
+    An interface for interacting with a temporary directory.
 
+    A temp directory is created on instantiation and it is deleted
+    (recursively) when this object is destroyed.
+
+    Keyword Args:
+        path (str): path of a directory to use for the temporary
+                    directory if specified. If the directory already
+                    exists, it is recursively deleted and then created.
+                    Otherwise, if the directory doesn't exist, it (and
+                    any intermediate directories) are created.
+        preserve (bool): if set to ``True``, this directory will not
+                         be destroyed. Useful for debugging tests.
     """
     TEMP_PREFIX = 'gprj_'
+    """
+    This is the prefix used for the new temp directory.
+    """
 
     def __init__(self, path='', preserve=False):
         self.preserve = preserve
@@ -343,7 +365,10 @@ class TemporaryProject(object):
         Get the absolute path to the filename found in the temp dir.
 
         Notes:
-            Always use forward slashes in paths.
+
+            * Always use forward slashes in paths.
+            * This method does not check if the path is valid. If the
+              filename given doesn't exist, an exception is not raised.
 
         Args:
             filename (str): the relative path to the file within this
@@ -500,6 +525,8 @@ class TemporaryProject(object):
         """
         Provides a public way to delete the directory that this temp project
         manages.
+
+        This allows for the temporary directory to be cleaned up on demand.
 
         Ignores all errors.
         """

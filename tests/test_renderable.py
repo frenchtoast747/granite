@@ -3,12 +3,12 @@ import os
 from tests import BaseTestCase, TestCaseWithTempProject
 
 from granite.environment import (
-    File, Renderable, TemplateNotFoundError,
+    RenderedFile, Renderable, TemplateNotFoundError,
     SimpleFile
 )
 
 
-class MyRenderedFile(File):
+class MyRenderedFile(RenderedFile):
     template_dirs = [os.path.join(os.path.dirname(__file__), 'templates')]
     template = 'test_renderable/template.txt'
 
