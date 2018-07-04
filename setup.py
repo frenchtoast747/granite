@@ -12,6 +12,9 @@ if sys.version_info < (3, 0):
 if sys.version_info < (3, 4):
     dependencies.append('pathlib2>=2.3')
 
+with open('README.md', 'r') as fh:
+    long_description = fh.read()
+
 setup(
     name='granite',
     description='Augments the unittest TestCase API by providing additional utilities useful for Python tools.',
@@ -19,10 +22,20 @@ setup(
     author='Aaron Boman',
     license='MIT',
     url='https://github.com/frenchtoast747/granite',
-    version='0.0.3',
-    long_description=__doc__,
+    version='0.0.4',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     packages=['granite'],
     include_package_data=True,
     zip_safe=True,
-    install_requires=dependencies
+    install_requires=dependencies,
+    classifiers=(
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+        'Topic :: Software Development :: Testing',
+        'Topic :: Software Development :: Testing :: Unit',
+        'Topic :: Utilities',
+    ),
 )
