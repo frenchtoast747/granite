@@ -6,7 +6,10 @@ from __future__ import absolute_import
 import contextlib
 import sys
 
-from io import StringIO
+try:
+    from io import StringIO
+except ImportError:
+    from StringIO import StringIO
 
 
 @contextlib.contextmanager
@@ -44,9 +47,10 @@ def capture_stdout():
             print(stdout)
             assert stdout.getvalue() == stdout.strip()
 
-    The yielded value is StringIO buffer. See its documentation for more details.
+    The yielded value is a StringIO buffer. See its documentation for more
+    details.
     """
-    sys.stdout = StringIO.StringIO()
+    sys.stdout = StringIO()
     yield sys.stdout
     sys.stdout = sys.__stdout__
 
@@ -63,8 +67,9 @@ def capture_stderr():
             print(stderr)
             assert stderr.getvalue() == stderr.strip()
 
-    The yielded value is StringIO buffer. See its documentation for more details.
+    The yielded value is StringIO buffer. See its documentation for more
+    details.
     """
-    sys.stderr = StringIO.StringIO()
+    sys.stderr = StringIO()
     yield sys.stderr
     sys.stderr = sys.__stderr__

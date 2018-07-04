@@ -31,14 +31,14 @@ class Renderable(object):
     """
     template = None
     """
-    The name of the template that instances of this class should use when rendering.
-    This attribute is required and must be set by subclasses.
+    The name of the template that instances of this class should use when
+    rendering. This attribute is required and must be set by subclasses.
     """
     template_dirs = None
     """
     The template search path; a list of strings. When searching for a template
-    by name, then the first file found on the path will be chosen. This attribute
-    is required and must be set by subclasses.
+    by name, then the first file found on the path will be chosen. This
+    attribute is required and must be set by subclasses.
     """
     _environment = None
 
@@ -229,22 +229,22 @@ class RenderedFile(Renderable):
     """
     DISABLE_ESCAPING = False
     """
-    By default, the value in the "content" template variable is escaped. 
-    This makes adding content for script/language files (via add_content()) 
-    much easier to read and maintain as script/language files usually 
-    interpret the special esacped characters differently. Set this attribute 
+    By default, the value in the "content" template variable is escaped.
+    This makes adding content for script/language files (via add_content())
+    much easier to read and maintain as script/language files usually
+    interpret the special esacped characters differently. Set this attribute
     to True in order to disable this functionality.
     """
     WRITE_MODE = 'w'
     """
-    When rendering the file, defaults to non-binary mode. Set this to 'wb' 
-    or something similar for different behavior when writing the rendered 
+    When rendering the file, defaults to non-binary mode. Set this to 'wb'
+    or something similar for different behavior when writing the rendered
     contents to a file.
     """
     ADD_NEWLINE = True
     """
-    Determines whether a newline should be added at the end of the file or 
-    not. When generating C code to be compiled by the ARM/GCC compiler, 
+    Determines whether a newline should be added at the end of the file or
+    not. When generating C code to be compiled by the ARM/GCC compiler,
     this makes the compiler happy. Defaults to True. Set to False to disable.
     """
     path = ''
@@ -311,15 +311,17 @@ class SimpleFile(RenderedFile):
     Follows the renderable interface and allows for building up a file with
     ``add_content()`` then rendering and writing to disk at a later time.
 
-    This class doesn't provide any sort of templating functionality. It just makes it
-    easier to incorporate simple file writing into a framework that expects a Renderable.
+    This class doesn't provide any sort of templating functionality. It just
+    makes it easier to incorporate simple file writing into a framework that
+    expects a Renderable.
     """
 
     def render(self):
         """
         Renders all of the contents to the filename given.
         """
-        with open(os.path.join(self.path, self.filename), self.WRITE_MODE) as f:
+        path = os.path.join(self.path, self.filename)
+        with open(path, self.WRITE_MODE) as f:
             f.write('\n'.join(self.content) + '\n' if self.ADD_NEWLINE else '')
 
 
@@ -737,7 +739,8 @@ class Snapshot(object):
     def __iter__(self):
         """
         Returns:
-            iter: an iterator over all of the files underneath this snapshot's directory.
+            iter: an iterator over all of the files underneath this snapshot's
+                  directory.
         """
         return iter(self.paths)
 
@@ -766,4 +769,3 @@ def _handle_error(_, path, excinfo):  # pragma: no cover
     if not (os.path.exists(path) or os.path.isdir(path)):
         _, exception, _ = excinfo
         raise exception
-

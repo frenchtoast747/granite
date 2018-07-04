@@ -18,7 +18,7 @@ ignore-patterns=
 #init-hook=
 
 # Use multiple processes to speed up Pylint.
-jobs=1
+jobs=8
 
 # List of plugins (as comma separated values of python modules names) to load,
 # usually to register additional checkers.
@@ -50,7 +50,7 @@ confidence=
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use"--disable=all --enable=classes
 # --disable=W"
-disable=too-few-public-methods,no-self-use
+disable=too-few-public-methods,no-self-use,C0103
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -292,7 +292,7 @@ ignored-classes=optparse.Values,thread._local,_thread._local
 # (useful for modules/projects where namespaces are manipulated during runtime
 # and thus existing member attributes cannot be deduced by static analysis. It
 # supports qualified module names, as well as Unix pattern matching.
-ignored-modules=
+ignored-modules=sphinx,jinja2
 
 # Show a hint with possible names when a member name was not found. The aspect
 # of finding the hint is based on edit distance.
@@ -355,7 +355,7 @@ valid-metaclass-classmethod-first-arg=mcs
 [DESIGN]
 
 # Maximum number of arguments for function / method
-max-args=5
+max-args=10
 
 # Maximum number of attributes for a class (see R0902).
 max-attributes=7

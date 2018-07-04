@@ -8,9 +8,10 @@ def cached_property(fn):
     """
     Converts a class's method into property and cache's the getter value.
 
-    Simple decorator a method with this function and it will be converted into a property
-    (attribute access) and the calculation to retrieve the value will be cached so that
-    the initial call performs the calculation, but subsequent calls will use the cache.
+    Simple decorator a method with this function and it will be converted into
+    a property (attribute access) and the calculation to retrieve the value
+    will be cached so that the initial call performs the calculation, but
+    subsequent calls will use the cache.
     """
     attr_name = '_' + fn.__name__
 

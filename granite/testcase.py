@@ -55,7 +55,8 @@ class AssetMixin(TestCaseMixin):
             'path/to/assets/some_file.txt'
 
         Raises:
-            AssetNotFound: when the filename to search for is not found on disk.
+            AssetNotFound: when the filename to search for is not found on
+                           disk.
 
         Returns:
             str: the absolute path to the asset file.
@@ -63,10 +64,11 @@ class AssetMixin(TestCaseMixin):
         filename = os.path.join(self.ASSET_DIR, *parts)
         if not os.path.exists(filename):
             raise AssetNotFound(
-                'self.get_asset_filename() was called with "{}" which constructed the filename '
-                '"{}" and was not found. Make sure that your path is correct and that '
-                'ASSET_DIR on your current or inherited TestCase classes is set '
-                'appropriately.'.format(parts, filename)
+                'self.get_asset_filename() was called with "{}" which'
+                'constructed the filename "{}" and was not found. Make sure '
+                'that your path is correct and that ASSET_DIR on your current '
+                'or inherited TestCase classes is set appropriately.'
+                .format(parts, filename)
             )
         return filename
 
@@ -88,7 +90,8 @@ class AssetMixin(TestCaseMixin):
             The contents of the file using the given read ``mode``.
 
         Raises:
-            AssetNotFound: when the filename to search for is not found on disk.
+            AssetNotFound: when the filename to search for is not found on
+                           disk.
         """
         filename = self.get_asset_filename(filename, *parts)
         with open(filename, mode=kwargs.pop('mode', 'r')) as f:
@@ -97,13 +100,15 @@ class AssetMixin(TestCaseMixin):
 
 class TemporaryProjectMixin(TestCaseMixin):
     """
-    Provides support for temporary project (directory) creation on a per-test basis.
+    Provides support for temporary project (directory) creation on a per-test
+    basis.
 
-    In order to use this mixin, the base TestCase class should inherit this mixin. This
-    provides a new attribute named ``temp_project`` which is an instance of TempProject.
+    In order to use this mixin, the base TestCase class should inherit this
+    mixin. This provides a new attribute named ``temp_project`` which is an
+    instance of TemporaryProject.
 
-    See the :class:`~granite.environment.TempProject` class for all of its methods for
-    how to manipulate the created temp project.
+    See the :class:`~granite.environment.TemporaryProject` class for all of its
+    methods for how to manipulate the created temp project.
 
     Example::
 
@@ -113,41 +118,42 @@ class TemporaryProjectMixin(TestCaseMixin):
 
         class TestSomeThing(TemporaryProjectMixin, TestCase):
             def test_some_thing(self):
-                # a new temporary directory has already been created by this point.
-                # let's create a new file and add some contents:
+                # a new temporary directory has already been created by
+                # this point. let's create a new file and add some contents:
                 self.temp_project.write('some_file', 'Ohai :)')
                 # get the temp_project's path by its .path attribute.
                 # This proves that the file was created and exists on disk:
                 self.assertTrue(os.path.exists(
                     os.path.join(self.temp_project.path, 'some_file')))
-                # read the contents of a file relative to the temp project's directory:
+                # read the contents of a file relative to the temp project's
+                # directory:
                 contents = self.temp_project.read('some_file')
                 self.assertEqual(contents, 'Ohai :)')
     """
     TMP_DIR = None
     """
-    Allows for setting the temp directory. Defaults to ``None`` which will use 
+    Allows for setting the temp directory. Defaults to ``None`` which will use
     Python's :any:`tempfile.mkdtemp` to make the temp directory.
     """
     PRESERVE_DIR = None
     """
-    Sets where the preserved path should be dumped too. This overrides the ``TMP_DIR`` when
-    ``ENABLE_PRESERVE`` is set to True.
+    Sets where the preserved path should be dumped too. This overrides the
+    ``TMP_DIR`` when ``ENABLE_PRESERVE`` is set to True.
     """
     ENABLE_PRESERVE = False
     """
-    A flag indicating whether the temp project should be preserved after the temp project
-    object is destroyed. If True, the directory will still exist allowing a user to view
-    the state of the directory after a test has run. This works in tandem with the
-    ``PRESERVE_DIR`` class attribute.
+    A flag indicating whether the temp project should be preserved after the
+    temp project object is destroyed. If True, the directory will still exist
+    allowing a user to view the state of the directory after a test has run.
+    This works in tandem with the ``PRESERVE_DIR`` class attribute.
     """
     TemporaryProjectClass = TemporaryProject
     """
     Set this attribute to a class that implements the interface of
     :class:`~granite.environment.TemporaryProject`.
-    This allows for creating a custom temporary project manager. A typical use case would
-    be to subclass :class:`~granite.environment.TempProject` and override specific
-    functionality then specify that new class here.
+    This allows for creating a custom temporary project manager. A typical use
+    case would be to subclass :class:`~granite.environment.TempProject` and
+    override specific functionality then specify that new class here.
     """
 
     def __init__(self, *args, **kwargs):
@@ -162,7 +168,9 @@ class TemporaryProjectMixin(TestCaseMixin):
         tmp_dir = self.TMP_DIR
         if self.ENABLE_PRESERVE and self.PRESERVE_DIR:
             tmp_dir = os.path.join(
-                self.PRESERVE_DIR, self.__class__.__name__, self._testMethodName)
+                self.PRESERVE_DIR,
+                self.__class__.__name__, self._testMethodName
+            )
         self.temp_project = self.TemporaryProjectClass(
             path=tmp_dir, preserve=self.ENABLE_PRESERVE)
 
@@ -173,9 +181,11 @@ class TemporaryProjectMixin(TestCaseMixin):
         super(TemporaryProjectMixin, self).tearDown()
         self.temp_project = None
 
-    def assert_in_temp_file(self, substring, filename, msg='', mode='r', not_in=False):
+    def assert_in_temp_file(self, substring, filename, msg='', mode='r',
+                            not_in=False):
         """
-        Asserts that the given contents are found in the file in the temp project.
+        Asserts that the given contents are found in the file in the temp
+        project.
 
         Args:
             substring (str): the substring to look for in the file's contents
@@ -190,7 +200,8 @@ class TemporaryProjectMixin(TestCaseMixin):
 
     def assert_not_in_temp_file(self, substring, filename, msg='', mode='r'):
         """
-        Asserts that the given contents are not found in the file in the temp project.
+        Asserts that the given contents are not found in the file in the temp
+        project.
 
         Args:
             substring (str): the substring to look for in the file's contents
@@ -198,20 +209,25 @@ class TemporaryProjectMixin(TestCaseMixin):
             msg (str):       the message to output in the event of a failure.
             mode (str):      the mode to open the file with. defaults to 'r'
         """
-        self.assert_in_temp_file(substring, filename, msg=msg, mode=mode, not_in=True)
+        self.assert_in_temp_file(
+            substring, filename, msg=msg, mode=mode, not_in=True)
 
     def assert_temp_path_exists(self, path='.', msg=''):
         """
-        Asserts that the path given exists relative to the root of the temp project.
+        Asserts that the path given exists relative to the root of the temp
+        project.
 
         Args:
-            path (str): the string of the path relative to the root of the temp directory.
-            msg (str):  a custom string to show in the event that this assertion fails.
+            path (str): the string of the path relative to the root of the temp
+                        directory.
+            msg (str):  a custom string to show in the event that this
+                        assertion fails.
         """
         if not msg:
             msg = (
-                'The given path "{}" was expected to exist, in the temp project "{}", but '
-                'it does not.'.format(path, self.temp_project.path)
+                'The given path "{}" was expected to exist, in the temp '
+                'project "{}", but it does not.'
+                .format(path, self.temp_project.path)
             )
         self.assert_exists(os.path.join(self.temp_project.path, path), msg=msg)
 
@@ -222,9 +238,11 @@ class AutoMockMixin(TestCaseMixin):
     and teardown logic for every function needing to be mocked.
     """
     def setUp(self):
+        """Attaches all mock patchers to this instance as mocked attributes"""
         super(AutoMockMixin, self).setUp()
         self.__mock_members = inspect.getmembers(
-            self.__class__, predicate=lambda m: isinstance(m, get_mock_patcher_types()))
+            self.__class__,
+            predicate=lambda m: isinstance(m, get_mock_patcher_types()))
 
         for name, patcher in self.__mock_members:
             mock_object = patcher.start()
@@ -243,10 +261,11 @@ class TestCase(StandardTestCase):
 
         By default, a unittest.TestCase class will print out something like:
             `test_my_feature (test_my_features_module.FeatureTestCase)`
-        which can't just be copied and pasted onto the command line in one go. You
-        have to copy the part in the parens first, then copy the test name itself.
-        This is somewhat annoying as usually the output only matters when a test fails
-        and when a test fails, it is usually desirable to reproduce the error locally.
+        which can't just be copied and pasted onto the command line in one go.
+        You have to copy the part in the parens first, then copy the test name
+        itself. This is somewhat annoying as usually the output only matters
+        when a test fails and when a test fails, it is usually desirable to
+        reproduce the error locally.
         """
         return "%s.%s" % (strclass(self.__class__), self._testMethodName)
 
@@ -273,7 +292,8 @@ class TestCase(StandardTestCase):
         Args:
             sized (Sized): any object that implements the __len__() method.
             length (int): the number of items that `sized` should contain
-            msg (Optional[str]): a message to display in the event that this assert fails.
+            msg (Optional[str]): a message to display in the event that this
+            assert fails.
 
         Example::
 
@@ -282,7 +302,8 @@ class TestCase(StandardTestCase):
             class MyTestCase(TestCase):
                 def test_that_contents_are_correct_length(self):
                     contents = [1, 2, 3]
-                    self.assert_length(contents, 3, msg='Some how, the length is not 3???')
+                    self.assert_length(
+                        contents, 3, msg='Some how, the length is not 3???')
         """
         self.assertEqual(len(sized), length, msg=msg)
 
@@ -290,8 +311,9 @@ class TestCase(StandardTestCase):
         """
         Asserts that the given path exists on disk.
 
-        This function acts like os.path.join() in that it can accept multiple arguments
-        all of which will be joined together before checking for existence.
+        This function acts like os.path.join() in that it can accept multiple
+        arguments all of which will be joined together before checking for
+        existence.
 
         Args:
             path (str): the root path to check for
