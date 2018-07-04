@@ -10,6 +10,8 @@ import shutil
 import tempfile
 import textwrap
 
+from pathlib import Path
+
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 from granite.utils import cached_property, path_as_key
@@ -451,8 +453,7 @@ class TemporaryProject(object):
             parameter.
         """
         filename = self.abspath(filename)
-        with open(filename):
-            os.utime(filename, times)
+        Path(filename).touch()
 
     def glob(self, pattern, start='', absolute=False):
         """

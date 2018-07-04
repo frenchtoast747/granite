@@ -8,6 +8,7 @@ dependencies = [
 
 if sys.version_info <= (3, 0):
     dependencies.append('mock>=2.0')
+    dependencies.append('pathlib2>=2.3')
 
 setup(
     name='granite',
