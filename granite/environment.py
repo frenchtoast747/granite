@@ -448,14 +448,12 @@ class TemporaryProject(object):
         """
         os.remove(self.abspath(filename))
 
-    def touch(self, filename, times=None):
+    def touch(self, filename):
         """
         Creates or updates timestamp on file given by filename.
 
         Args:
             filename (str): the filename to touch
-            times (Tuple[int, int]): see os.utime for more information on this
-            parameter.
         """
         filename = self.abspath(filename)
         Path(filename).touch()
