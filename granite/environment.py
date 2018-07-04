@@ -10,7 +10,12 @@ import shutil
 import tempfile
 import textwrap
 
-from pathlib import Path
+try:
+    from pathlib import Path
+except ImportError:
+    # for Python 2
+    from pathlib2 import Path
+
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 

@@ -6,8 +6,10 @@ dependencies = [
     'jinja2>=2.10',
 ]
 
-if sys.version_info <= (3, 0):
+if sys.version_info < (3, 0):
     dependencies.append('mock>=2.0')
+
+if sys.version_info < (3, 4):
     dependencies.append('pathlib2>=2.3')
 
 setup(
