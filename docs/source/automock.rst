@@ -6,7 +6,7 @@ function needs to mock one (or more) of the functions that it uses, that functio
 throughout the entirety of the TestCase. The :any:`AutoMockMixin` helps alleviate the burden this
 can cause.
 
-:any:`mock.patch` is typically used for most cases as a decorator on the test function like this::
+``mock.patch`` is typically used for most cases as a decorator on the test function like this::
 
     # tests/test_foo.py
     from unittest import mock
