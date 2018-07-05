@@ -14,9 +14,6 @@ if sys.version_info < (3, 4):
     dependencies.append('pathlib2>=2.3')
 
 THIS_DIR = os.path.abspath(os.path.dirname(__file__))
-print('-' * 80)
-print('\n'.join(os.listdir(THIS_DIR)))
-print('-' * 80)
 readme = os.path.join(THIS_DIR, 'README.md')
 
 with open(readme, 'r') as f:
@@ -29,7 +26,7 @@ setup(
     author='Aaron Boman',
     license='MIT',
     url='https://github.com/frenchtoast747/granite',
-    version='0.0.4',
+    version='0.0.5',
     long_description=long_description,
     long_description_content_type='text/markdown',
     packages=['granite'],
