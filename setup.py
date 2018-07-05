@@ -13,7 +13,11 @@ if sys.version_info < (3, 0):
 if sys.version_info < (3, 4):
     dependencies.append('pathlib2>=2.3')
 
-readme = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.md')
+THIS_DIR = os.path.abspath(os.path.dirname(__file__))
+print('-' * 80)
+print('\n'.join(os.listdir(THIS_DIR)))
+print('-' * 80)
+readme = os.path.join(THIS_DIR, 'README.md')
 
 with open(readme, 'r') as f:
     long_description = f.read()
